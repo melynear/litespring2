@@ -9,6 +9,6 @@ import org.junit.runners.Suite;
  * @date 2020年03月11日
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ApplicationContextTest.class, BeanFactoryTest.class})
+@Suite.SuiteClasses({ApplicationContextTest.class, BeanFactoryTest.class, ResourceTest.class})
 public class V1AllTests {
 }
