@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version v1.0
  * @date 2020年03月09日
  */
-public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefinitionRegsitry {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegsitry {
     private ClassLoader classLoader;
     
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
@@ -25,6 +25,20 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefiniti
             throw new BeanCreationException("Bean Definition does not exist.");
         }
         
+        if (beanDefinition.isSingleton()) {
+            Object bean = getSingleton(beanID);
+            if (bean == null) {
+                bean = createBean(beanDefinition);
+                registerSingleton(beanID, bean);
+            }
+            
+            return bean;
+        }
+        
+        return createBean(beanDefinition);
+    }
+    
+    private Object createBean(BeanDefinition beanDefinition) {
         String beanClassName = beanDefinition.getBeanClassName();
         
         try {
@@ -36,11 +50,11 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefiniti
     }
     
     public ClassLoader getClassLoader() {
-        return classLoader;
+        return classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader();
     }
     
     public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader();
+        this.classLoader = classLoader;
     }
     
     public BeanDefinition getBeanDefinition(String beanID) {

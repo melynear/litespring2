@@ -12,6 +12,12 @@ public class GenericBeanDefinition implements BeanDefinition {
     
     private String beanClassName;
     
+    private boolean singleton = true;
+    
+    private boolean prototype = false;
+    
+    private String scope = SCOPE_DEFAULT;
+    
     public GenericBeanDefinition(String id, String beanClassName) {
         this.id = id;
         this.beanClassName = beanClassName;
@@ -19,5 +25,23 @@ public class GenericBeanDefinition implements BeanDefinition {
     
     public String getBeanClassName() {
         return this.beanClassName;
+    }
+    
+    public boolean isSingleton() {
+        return singleton;
+    }
+    
+    public boolean isPrototype() {
+        return prototype;
+    }
+    
+    public String getScope() {
+        return scope;
+    }
+    
+    public void setScope(String scope) {
+        this.scope = scope;
+        singleton = SCOPE_SINGLETON.equals(scope) || SCOPE_DEFAULT.equals(scope);
+        singleton = SCOPE_PROTOTYPE.equals(scope);
     }
 }

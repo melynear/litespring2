@@ -9,6 +9,7 @@ import org.litespring2.beans.factory.BeanDefinitionStoreException;
 import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 import org.litespring2.beans.factory.xml.XmlBeanDefinitionReader;
 import org.litespring2.core.io.ClassPathResource;
+import org.litespring2.service.v1.PetStoreService;
 
 /**
  * @author 种花家的兔子
@@ -32,8 +33,15 @@ public class BeanFactoryTest {
         
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition("petStore");
         
+        Assert.assertTrue(beanDefinition.isSingleton());
+        Assert.assertFalse(beanDefinition.isPrototype());
+        Assert.assertEquals(BeanDefinition.SCOPE_DEFAULT, beanDefinition.getScope());
+        
         Assert.assertEquals("org.litespring2.service.v1.PetStoreService", beanDefinition.getBeanClassName());
-        Assert.assertNotNull(beanFactory.getBean("petStore"));
+        
+        PetStoreService petStore = (PetStoreService) beanFactory.getBean("petStore");
+        Assert.assertNotNull(petStore);
+        Assert.assertTrue(petStore.equals(beanFactory.getBean("petStore")));
     }
     
     @Test

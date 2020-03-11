@@ -22,6 +22,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         
         Resource resource = getResourceByPath(configFile);
         reader.loadBeanDefinition(resource);
+        factory.setClassLoader(getClassLoader());
     }
     
     public Object getBean(String beanID) {
@@ -29,12 +30,11 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
     
     public ClassLoader getClassLoader() {
-        return classLoader;
+        return classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader();
     }
     
     public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader();
-        factory.setClassLoader(this.classLoader);
+        this.classLoader = classLoader;
     }
     
     public abstract Resource getResourceByPath(String path);
