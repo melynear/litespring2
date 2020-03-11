@@ -1,14 +1,13 @@
 package org.litespring2.beans.factory.xml;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.litespring2.beans.BeanDefinition;
 import org.litespring2.beans.factory.BeanDefinitionStoreException;
 import org.litespring2.beans.factory.supprot.BeanDefinitionRegsitry;
 import org.litespring2.beans.factory.supprot.GenericBeanDefinition;
-import org.litespring2.utils.ClassUtils;
+import org.litespring2.core.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,16 +38,14 @@ public class XmlBeanDefinitionReader {
     /**
      * 解析xml配置文件
      *
-     * @param configFile
+     * @param resource
      */
-    public void loadBeanDefinition(String configFile) {
-        ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
-        
-        InputStream inputStream = classLoader.getResourceAsStream(configFile);
-        
+    public void loadBeanDefinition(Resource resource) {
         SAXReader saxReader = new SAXReader();
+        InputStream inputStream = null;
         
         try {
+            inputStream = resource.getInputStream();
             Document document = saxReader.read(inputStream);
             
             // 根元素就是<beans>标签
@@ -65,14 +62,14 @@ public class XmlBeanDefinitionReader {
                 BeanDefinition beanDefinition = new GenericBeanDefinition(id, beanClassName);
                 regsitry.registerBeanDefinition(id, beanDefinition);
             }
-        } catch (DocumentException e) {
-            throw new BeanDefinitionStoreException("", e);
+        } catch (Exception e) {
+            throw new BeanDefinitionStoreException("IOException parsing XML document", e);
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    throw new BeanDefinitionStoreException("", e);
+                    throw new BeanDefinitionStoreException("IOException parsing XML document", e);
                 }
             }
         }
