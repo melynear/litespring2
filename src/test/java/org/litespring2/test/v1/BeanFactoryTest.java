@@ -10,6 +10,7 @@ import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 import org.litespring2.beans.factory.xml.XmlBeanDefinitionReader;
 import org.litespring2.core.io.ClassPathResource;
 import org.litespring2.service.v1.PetStoreService;
+import org.litespring2.service.v1.PetStoreService1;
 
 /**
  * @author 种花家的兔子
@@ -42,6 +43,22 @@ public class BeanFactoryTest {
         PetStoreService petStore = (PetStoreService) beanFactory.getBean("petStore");
         Assert.assertNotNull(petStore);
         Assert.assertTrue(petStore.equals(beanFactory.getBean("petStore")));
+    }
+    
+    @Test
+    public void testGetBeanPrototype() {
+        reader.loadBeanDefinition(new ClassPathResource("petstore-v1.xml"));
+        
+        BeanDefinition beanDefinition = beanFactory.getBeanDefinition("petStore1");
+        
+        Assert.assertFalse(beanDefinition.isSingleton());
+        Assert.assertTrue(beanDefinition.isPrototype());
+        Assert.assertEquals(BeanDefinition.SCOPE_PROTOTYPE, beanDefinition.getScope());
+        
+        PetStoreService1 petStore1 = (PetStoreService1) beanFactory.getBean("petStore1");
+        PetStoreService1 petStore2 = (PetStoreService1) beanFactory.getBean("petStore1");
+        
+        Assert.assertFalse(petStore1.equals(petStore2));
     }
     
     @Test

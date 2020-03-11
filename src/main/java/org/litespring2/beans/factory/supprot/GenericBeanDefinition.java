@@ -42,6 +42,6 @@ public class GenericBeanDefinition implements BeanDefinition {
     public void setScope(String scope) {
         this.scope = scope;
         singleton = SCOPE_SINGLETON.equals(scope) || SCOPE_DEFAULT.equals(scope);
-        singleton = SCOPE_PROTOTYPE.equals(scope);
+        prototype = SCOPE_PROTOTYPE.equals(scope);
     }
 }

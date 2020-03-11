@@ -6,5 +6,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/beans ">
     <bean id="petStore" class="org.litespring2.service.v1.PetStoreService"></bean>
+    <bean id="petStore1" class="org.litespring2.service.v1.PetStoreService1" scope="prototype"></bean>
     <bean id="invalidBean" class="xxx.xxxxx"></bean>
 </beans>
