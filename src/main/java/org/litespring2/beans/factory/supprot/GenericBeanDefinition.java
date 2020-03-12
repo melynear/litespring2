@@ -1,6 +1,10 @@
 package org.litespring2.beans.factory.supprot;
 
 import org.litespring2.beans.BeanDefinition;
+import org.litespring2.beans.PropertyValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 种花家的兔子
@@ -17,6 +21,8 @@ public class GenericBeanDefinition implements BeanDefinition {
     private boolean prototype = false;
     
     private String scope = SCOPE_DEFAULT;
+    
+    private List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
     
     public GenericBeanDefinition(String id, String beanClassName) {
         this.id = id;
@@ -43,5 +49,9 @@ public class GenericBeanDefinition implements BeanDefinition {
         this.scope = scope;
         singleton = SCOPE_SINGLETON.equals(scope) || SCOPE_DEFAULT.equals(scope);
         prototype = SCOPE_PROTOTYPE.equals(scope);
+    }
+    
+    public List<PropertyValue> getPropertyValues() {
+        return propertyValues;
     }
 }

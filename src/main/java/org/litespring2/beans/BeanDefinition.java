@@ -1,5 +1,7 @@
 package org.litespring2.beans;
 
+import java.util.List;
+
 /**
  * @author 种花家的兔子
  * @version v1.0
@@ -21,4 +23,6 @@ public interface BeanDefinition {
     void setScope(String scope);
     
     String getBeanClassName();
+    
+    List<PropertyValue> getPropertyValues();
 }

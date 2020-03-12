@@ -1,10 +1,16 @@
 package org.litespring2.beans.factory.xml;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.litespring2.beans.BeanDefinition;
+import org.litespring2.beans.PropertyValue;
 import org.litespring2.beans.factory.BeanDefinitionStoreException;
+import org.litespring2.beans.factory.config.RuntimeBeanReference;
+import org.litespring2.beans.factory.config.TypedStringValue;
 import org.litespring2.beans.factory.supprot.BeanDefinitionRegsitry;
 import org.litespring2.beans.factory.supprot.GenericBeanDefinition;
 import org.litespring2.core.io.Resource;
@@ -34,7 +40,29 @@ public class XmlBeanDefinitionReader {
      */
     private static final String SCOPE_ATTRIBUTE = "scope";
     
+    /**
+     * <bean></bean>标签下的property标签
+     */
+    private static final String PROPERTY_ELEMENT = "property";
+    
+    /**
+     * <property></property>标签的name属性
+     */
+    private static final String NAME_ATTRIBUTE = "name";
+    
+    /**
+     * <property></property>标签的value属性
+     */
+    private static final String VALUE_ATTRIBUTE = "value";
+    
+    /**
+     * <property></property>标签的ref属性
+     */
+    private static final String REF_ATTRIBUTE = "ref";
+    
     private BeanDefinitionRegsitry regsitry;
+    
+    protected final Log logger = LogFactory.getLog(getClass());
     
     public XmlBeanDefinitionReader(BeanDefinitionRegsitry regsitry) {
         this.regsitry = regsitry;
@@ -69,6 +97,9 @@ public class XmlBeanDefinitionReader {
                 if (element.attribute(SCOPE_ATTRIBUTE) != null) {
                     beanDefinition.setScope(element.attributeValue(SCOPE_ATTRIBUTE));
                 }
+                
+                parsePropertyElement(element, beanDefinition);
+                
                 regsitry.registerBeanDefinition(id, beanDefinition);
             }
         } catch (Exception e) {
@@ -81,6 +112,47 @@ public class XmlBeanDefinitionReader {
                     throw new BeanDefinitionStoreException("IOException parsing XML document", e);
                 }
             }
+        }
+    }
+    
+    private void parsePropertyElement(Element beanElement, BeanDefinition beanDefinition) {
+        Iterator iterator = beanElement.elementIterator();
+        while (iterator.hasNext()) {
+            Element propertyElement = (Element) iterator.next();
+            String nameAttribute = propertyElement.attributeValue(NAME_ATTRIBUTE);
+            if (StringUtils.isEmpty(nameAttribute)) {
+                logger.fatal("Tag 'property' must have a 'name' attribute.");
+                return;
+            }
+            
+            Object object = parsePropertyValue(propertyElement, nameAttribute);
+            PropertyValue propertyValue = new PropertyValue(nameAttribute, object);
+            beanDefinition.getPropertyValues().add(propertyValue);
+        }
+    }
+    
+    private Object parsePropertyValue(Element propertyElement, String nameAttribute) {
+        String elementName = nameAttribute != null ? "<property> element for property '" +
+                nameAttribute + "'" : "<constructor-arg> element";
+        
+        if (propertyElement.attribute(VALUE_ATTRIBUTE) != null) {
+            String attributeValue = propertyElement.attributeValue(VALUE_ATTRIBUTE);
+            if (StringUtils.isEmpty(attributeValue)) {
+                logger.error(elementName + "contains empty 'value' attribute.");
+                throw new RuntimeException(elementName + "contains empty 'value' attribute.");
+            }
+            
+            return new TypedStringValue(attributeValue);
+        } else if (propertyElement.attribute(REF_ATTRIBUTE) != null) {
+            String attributeValue = propertyElement.attributeValue(REF_ATTRIBUTE);
+            if (StringUtils.isEmpty(attributeValue)) {
+                logger.error(elementName + "contains empty 'ref' attribute.");
+                throw new RuntimeException(elementName + "contains empty 'ref' attribute.");
+            }
+            
+            return new RuntimeBeanReference(attributeValue);
+        } else {
+            throw new RuntimeException(elementName + "must specify a ref or value.");
         }
     }
 }
