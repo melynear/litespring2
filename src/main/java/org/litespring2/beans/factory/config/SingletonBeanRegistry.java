@@ -6,7 +6,7 @@ package org.litespring2.beans.factory.config;
  * @date 2020年03月11日
  */
 public interface SingletonBeanRegistry {
-    void registerSingleton(String beanID, Object object);
+    void registerSingleton(String beanName, Object object);
     
-    Object getSingleton(String beanID);
+    Object getSingleton(String beanName);
 }
