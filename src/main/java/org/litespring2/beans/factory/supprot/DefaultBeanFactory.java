@@ -1,10 +1,17 @@
 package org.litespring2.beans.factory.supprot;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.litespring2.beans.BeanDefinition;
+import org.litespring2.beans.PropertyValue;
 import org.litespring2.beans.factory.BeanCreationException;
 import org.litespring2.beans.factory.config.ConfigurableBeanFactory;
+import org.litespring2.context.support.BeanDefinitionValueResolver;
 import org.litespring2.utils.ClassUtils;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,6 +46,20 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     }
     
     private Object createBean(BeanDefinition beanDefinition) {
+        Object bean = instantiateBean(beanDefinition);
+        
+        populateBean(beanDefinition, bean);
+        
+        return bean;
+    }
+    
+    /**
+     * 实例化bean对象
+     *
+     * @param beanDefinition
+     * @return
+     */
+    private Object instantiateBean(BeanDefinition beanDefinition) {
         String beanClassName = beanDefinition.getBeanClassName();
         
         try {
@@ -46,6 +67,44 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
             return clazz.newInstance();
         } catch (Exception e) {
             throw new BeanCreationException("Create bean for " + beanClassName + "failed.", e);
+        }
+    }
+    
+    /**
+     * 填充bean的属性
+     *
+     * @param beanDefinition
+     * @param bean
+     */
+    private void populateBean(BeanDefinition beanDefinition, Object bean) {
+        List<PropertyValue> propertyValues = beanDefinition.getPropertyValues();
+        
+        if (CollectionUtils.isEmpty(propertyValues)) {
+            return;
+        }
+        
+        try {
+            for (PropertyValue propertyValue : propertyValues) {
+                String propertyName = propertyValue.getName();
+                Object originValue = propertyValue.getValue();
+                
+                BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
+                Object resolvedValue = resolver.resolveValueIfNecessary(originValue);
+                
+                
+                BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+                PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+                for (PropertyDescriptor pd : propertyDescriptors) {
+                    if (pd.getName().equals(propertyName)) {
+                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        break;
+                    }
+                }
+                
+            }
+        } catch (Exception e) {
+            new BeanCreationException("Failed to obtain BeanInfo for class [" +
+                    beanDefinition.getBeanClassName() + "]");
         }
     }
     

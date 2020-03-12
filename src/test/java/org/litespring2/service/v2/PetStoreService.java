@@ -13,7 +13,7 @@ public class PetStoreService {
     
     private ItemDao itemDao;
     
-    private String petName;
+    private String owner;
     
     public AccountDao getAccountDao() {
         return accountDao;
@@ -31,7 +31,11 @@ public class PetStoreService {
         this.itemDao = itemDao;
     }
     
-    public void setPetName(String petName) {
-        this.petName = petName;
+    public String getOwner() {
+        return owner;
+    }
+    
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

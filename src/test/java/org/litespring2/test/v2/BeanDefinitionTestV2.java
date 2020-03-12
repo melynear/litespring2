@@ -44,7 +44,7 @@ public class BeanDefinitionTestV2 {
         }
         
         {
-            PropertyValue propertyValue = getPropertyValue("petName", pvs);
+            PropertyValue propertyValue = getPropertyValue("owner", pvs);
             Assert.assertNotNull(propertyValue);
             Assert.assertTrue(propertyValue.getValue() instanceof TypedStringValue);
         }

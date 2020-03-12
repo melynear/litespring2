@@ -8,7 +8,7 @@ http://www.springframework.org/schema/beans ">
     <bean id="petStore" class="org.litespring2.service.v2.PetStoreService">
         <property name="accountDao" ref="accountDao"/>
         <property name="itemDao" ref="itemDao"/>
-        <property name="petName" value="xxx"/>
+        <property name="owner" value="lizhi"/>
     </bean>
     
     <bean id="accountDao" class="org.litespring2.dao.v2.AccountDao"></bean>
