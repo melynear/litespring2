@@ -9,6 +9,7 @@ http://www.springframework.org/schema/beans ">
         <property name="accountDao" ref="accountDao"/>
         <property name="itemDao" ref="itemDao"/>
         <property name="owner" value="lizhi"/>
+        <property name="version" value="2"/>
     </bean>
     
     <bean id="accountDao" class="org.litespring2.dao.v2.AccountDao"></bean>

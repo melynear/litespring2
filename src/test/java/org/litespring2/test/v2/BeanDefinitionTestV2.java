@@ -29,7 +29,7 @@ public class BeanDefinitionTestV2 {
         
         List<PropertyValue> pvs = beanDefinition.getPropertyValues();
         
-        Assert.assertTrue(pvs.size() == 3);
+        Assert.assertTrue(pvs.size() == 4);
         
         {
             PropertyValue propertyValue = getPropertyValue("accountDao", pvs);

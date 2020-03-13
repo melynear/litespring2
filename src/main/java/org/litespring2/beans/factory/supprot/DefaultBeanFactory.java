@@ -3,6 +3,8 @@ package org.litespring2.beans.factory.supprot;
 import org.apache.commons.collections4.CollectionUtils;
 import org.litespring2.beans.BeanDefinition;
 import org.litespring2.beans.PropertyValue;
+import org.litespring2.beans.SimpleTypeConverter;
+import org.litespring2.beans.TypeConverter;
 import org.litespring2.beans.factory.BeanCreationException;
 import org.litespring2.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring2.context.support.BeanDefinitionValueResolver;
@@ -83,6 +85,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
             return;
         }
         
+        TypeConverter converter = new SimpleTypeConverter();
+        
         try {
             for (PropertyValue propertyValue : propertyValues) {
                 String propertyName = propertyValue.getName();
@@ -91,12 +95,12 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
                 BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
                 Object resolvedValue = resolver.resolveValueIfNecessary(originValue);
                 
-                
                 BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
                 PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor pd : propertyDescriptors) {
                     if (pd.getName().equals(propertyName)) {
-                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        Object convertedValue = converter.convertIfNecessary(resolvedValue, pd.getPropertyType());
+                        pd.getWriteMethod().invoke(bean, convertedValue);
                         break;
                     }
                 }
