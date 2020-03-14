@@ -1,5 +1,6 @@
 package org.litespring2.beans.factory.supprot;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.litespring2.beans.BeanDefinition;
 import org.litespring2.beans.PropertyValue;
@@ -50,7 +51,9 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     private Object createBean(BeanDefinition beanDefinition) {
         Object bean = instantiateBean(beanDefinition);
         
-        populateBean(beanDefinition, bean);
+        // populateBean(beanDefinition, bean);
+        
+        populateBeanUseCommonBeanUtils(beanDefinition, bean);
         
         return bean;
     }
@@ -114,6 +117,35 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         } catch (Exception e) {
             new BeanCreationException("Failed to obtain BeanInfo for class [" +
                     beanDefinition.getBeanClassName() + "]");
+        }
+    }
+    
+    /**
+     * 使用commons-beanutils包提供的功能来设置属性值
+     *
+     * @param beanDefinition
+     * @param bean
+     */
+    private void populateBeanUseCommonBeanUtils(BeanDefinition beanDefinition, Object bean) {
+        List<PropertyValue> propertyValues = beanDefinition.getPropertyValues();
+        
+        if (CollectionUtils.isEmpty(propertyValues)) {
+            return;
+        }
+        
+        BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
+        
+        for (PropertyValue propertyValue : propertyValues) {
+            String name = propertyValue.getName();
+            Object originValue = propertyValue.getValue();
+            
+            Object resolvedValue = resolver.resolveValueIfNecessary(originValue);
+            try {
+                BeanUtils.setProperty(bean, name, resolvedValue);
+            } catch (Exception e) {
+                new BeanCreationException("Failed to obtain BeanInfo for class [" +
+                        beanDefinition.getBeanClassName() + "]");
+            }
         }
     }
     
