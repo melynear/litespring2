@@ -26,4 +26,16 @@ public class PetStoreService {
         this.itemDao = itemDao;
         this.version = version;
     }
+    
+    public AccountDao getAccountDao() {
+        return accountDao;
+    }
+    
+    public ItemDao getItemDao() {
+        return itemDao;
+    }
+    
+    public int getVersion() {
+        return version;
+    }
 }

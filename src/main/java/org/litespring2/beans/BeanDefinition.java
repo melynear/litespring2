@@ -22,9 +22,13 @@ public interface BeanDefinition {
     
     void setScope(String scope);
     
+    String getBeanID();
+    
     String getBeanClassName();
     
     List<PropertyValue> getPropertyValues();
     
     ConstructorArgument getConstructorArgument();
+    
+    boolean hasConstructorArgumentValues();
 }

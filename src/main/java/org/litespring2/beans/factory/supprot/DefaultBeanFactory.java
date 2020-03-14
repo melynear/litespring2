@@ -64,11 +64,16 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     private Object instantiateBean(BeanDefinition beanDefinition) {
         String beanClassName = beanDefinition.getBeanClassName();
         
-        try {
-            Class<?> clazz = getClassLoader().loadClass(beanClassName);
-            return clazz.newInstance();
-        } catch (Exception e) {
-            throw new BeanCreationException("Create bean for " + beanClassName + "failed.", e);
+        if (beanDefinition.hasConstructorArgumentValues()) {
+            ConstructorResolver resolver = new ConstructorResolver(this);
+            return resolver.autowireConstructor(beanDefinition);
+        } else {
+            try {
+                Class<?> clazz = getClassLoader().loadClass(beanClassName);
+                return clazz.newInstance();
+            } catch (Exception e) {
+                throw new BeanCreationException("Create bean for " + beanClassName + "failed.", e);
+            }
         }
     }
     

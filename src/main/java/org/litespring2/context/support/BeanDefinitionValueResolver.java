@@ -1,8 +1,8 @@
 package org.litespring2.context.support;
 
+import org.litespring2.beans.factory.BeanFactory;
 import org.litespring2.beans.factory.config.RuntimeBeanReference;
 import org.litespring2.beans.factory.config.TypedStringValue;
-import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 
 /**
  * @author 种花家的兔子
@@ -10,9 +10,9 @@ import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
  * @date 2020年03月12日
  */
 public class BeanDefinitionValueResolver {
-    private final DefaultBeanFactory factory;
+    private final BeanFactory factory;
     
-    public BeanDefinitionValueResolver(DefaultBeanFactory factory) {
+    public BeanDefinitionValueResolver(BeanFactory factory) {
         this.factory = factory;
     }
     

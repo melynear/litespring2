@@ -32,6 +32,10 @@ public class GenericBeanDefinition implements BeanDefinition {
         this.beanClassName = beanClassName;
     }
     
+    public String getBeanID() {
+        return id;
+    }
+    
     public String getBeanClassName() {
         return this.beanClassName;
     }
