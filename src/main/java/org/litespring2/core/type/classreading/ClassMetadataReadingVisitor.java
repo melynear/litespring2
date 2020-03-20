@@ -1,6 +1,7 @@
 package org.litespring2.core.type.classreading;
 
 
+import org.litespring2.core.type.ClassMetadata;
 import org.litespring2.utils.ClassUtils;
 import org.springframework.asm.ClassVisitor;
 import org.springframework.asm.Opcodes;
@@ -11,7 +12,7 @@ import org.springframework.asm.SpringAsmInfo;
  * @version v1.0
  * @date 2020年03月20日
  */
-public class ClassMetadataReadingVisitor extends ClassVisitor {
+public class ClassMetadataReadingVisitor extends ClassVisitor implements ClassMetadata {
     private String className;
     private boolean isInterface;
     private boolean isAbstract;
@@ -41,30 +42,37 @@ public class ClassMetadataReadingVisitor extends ClassVisitor {
         }
     }
     
+    @Override
     public String getClassName() {
         return className;
     }
     
+    @Override
     public boolean isInterface() {
         return isInterface;
     }
     
+    @Override
     public boolean isAbstract() {
         return isAbstract;
     }
     
+    @Override
     public boolean isFinal() {
         return isFinal;
     }
     
+    @Override
     public boolean hasSuperClass() {
         return (this.superClassName != null);
     }
     
+    @Override
     public String getSuperClassName() {
         return superClassName;
     }
     
+    @Override
     public String[] getInterfaceNames() {
         return interfaces;
     }
