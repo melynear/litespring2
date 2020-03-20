@@ -28,6 +28,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
     
+    @Override
     public Object getBean(String beanID) {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanID);
         
@@ -149,18 +150,22 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         }
     }
     
+    @Override
     public ClassLoader getClassLoader() {
         return classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader();
     }
     
+    @Override
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
     
+    @Override
     public BeanDefinition getBeanDefinition(String beanID) {
         return beanDefinitionMap.get(beanID);
     }
     
+    @Override
     public void registerBeanDefinition(String beanID, BeanDefinition beanDefinition) {
         this.beanDefinitionMap.put(beanID, beanDefinition);
     }
