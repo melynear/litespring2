@@ -41,6 +41,10 @@ public class ClassPathBeanDefinitionScanner {
     public Set<BeanDefinition> doScan(String packagesToScan) {
         String[] packages = StringUtils.split(packagesToScan, ",");
         
+        for (int i = 0; i < packages.length; i++) {
+            packages[i] = StringUtils.trim(packages[i]);
+        }
+        
         Set<BeanDefinition> beanDefinitions = new LinkedHashSet<>();
         
         for (String basePackage : packages) {
