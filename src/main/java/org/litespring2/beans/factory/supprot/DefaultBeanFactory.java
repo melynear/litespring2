@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version v1.0
  * @date 2020年03月09日
  */
-public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegsitry {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
     private ClassLoader classLoader;
     
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();

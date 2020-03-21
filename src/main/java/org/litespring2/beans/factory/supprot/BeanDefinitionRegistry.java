@@ -7,7 +7,7 @@ import org.litespring2.beans.BeanDefinition;
  * @version v1.0
  * @date 2020年03月10日
  */
-public interface BeanDefinitionRegsitry {
+public interface BeanDefinitionRegistry {
     BeanDefinition getBeanDefinition(String beanID);
     
     void registerBeanDefinition(String beanID, BeanDefinition beanDefinition);

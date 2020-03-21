@@ -12,7 +12,7 @@ import org.litespring2.beans.PropertyValue;
 import org.litespring2.beans.factory.BeanDefinitionStoreException;
 import org.litespring2.beans.factory.config.RuntimeBeanReference;
 import org.litespring2.beans.factory.config.TypedStringValue;
-import org.litespring2.beans.factory.supprot.BeanDefinitionRegsitry;
+import org.litespring2.beans.factory.supprot.BeanDefinitionRegistry;
 import org.litespring2.beans.factory.supprot.GenericBeanDefinition;
 import org.litespring2.core.io.Resource;
 
@@ -71,11 +71,11 @@ public class XmlBeanDefinitionReader {
      */
     private static final String TYPE_ATTRIBUTE = "type";
     
-    private BeanDefinitionRegsitry regsitry;
+    private BeanDefinitionRegistry regsitry;
     
     protected final Log logger = LogFactory.getLog(getClass());
     
-    public XmlBeanDefinitionReader(BeanDefinitionRegsitry regsitry) {
+    public XmlBeanDefinitionReader(BeanDefinitionRegistry regsitry) {
         this.regsitry = regsitry;
     }
     
