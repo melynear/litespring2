@@ -8,6 +8,7 @@ import org.litespring2.beans.SimpleTypeConverter;
 import org.litespring2.beans.TypeConverter;
 import org.litespring2.beans.factory.BeanCreationException;
 import org.litespring2.beans.factory.config.ConfigurableBeanFactory;
+import org.litespring2.beans.factory.config.DependencyDescriptor;
 import org.litespring2.context.support.BeanDefinitionValueResolver;
 import org.litespring2.utils.ClassUtils;
 
@@ -168,5 +169,33 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     @Override
     public void registerBeanDefinition(String beanID, BeanDefinition beanDefinition) {
         this.beanDefinitionMap.put(beanID, beanDefinition);
+    }
+    
+    @Override
+    public Object resolveDependency(DependencyDescriptor descriptor) {
+        Class<?> typeToMatch = descriptor.getDependencyType();
+        
+        for (BeanDefinition bd : beanDefinitionMap.values()) {
+            resolveBeanClass(bd);
+            
+            Class<?> resolvedClass = bd.getBeanClass();
+            if (typeToMatch.isAssignableFrom(resolvedClass)) {
+                return getBean(bd.getBeanID());
+            }
+        }
+        
+        return null;
+    }
+    
+    private void resolveBeanClass(BeanDefinition beanDefinition) {
+        if (beanDefinition.hasBeanClass()) {
+            return;
+        }
+        
+        try {
+            beanDefinition.resolveBeanClass(getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new BeanCreationException("cannot load class:" + beanDefinition.getBeanClassName(), e);
+        }
     }
 }

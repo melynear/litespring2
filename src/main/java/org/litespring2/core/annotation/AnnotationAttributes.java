@@ -29,11 +29,9 @@ public class AnnotationAttributes extends LinkedHashMap<String, Object> {
         super(initialCapacity);
     }
     
-    
     public AnnotationAttributes(Map<String, Object> map) {
         super(map);
     }
-    
     
     public String getString(String attributeName) {
         return doGet(attributeName, String.class);
@@ -66,10 +64,8 @@ public class AnnotationAttributes extends LinkedHashMap<String, Object> {
         return doGet(attributeName, Class[].class);
     }
     
-    
     @SuppressWarnings("unchecked")
     private <T> T doGet(String attributeName, Class<T> expectedType) {
-        
         Object value = this.get(attributeName);
         Assert.notNull(value, format("Attribute '%s' not found", attributeName));
         return (T) value;

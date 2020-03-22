@@ -1,7 +1,7 @@
 package org.litespring2.service.v4;
 
-import org.litespring2.dao.v3.AccountDao;
-import org.litespring2.dao.v3.ItemDao;
+import org.litespring2.dao.v4.AccountDao;
+import org.litespring2.dao.v4.ItemDao;
 import org.litespring2.stereotype.Autowired;
 import org.litespring2.stereotype.Component;
 
