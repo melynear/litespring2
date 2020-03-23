@@ -36,7 +36,7 @@ public class AutowireFieldElement extends InjectionElement {
         }
     }
     
-    private Field getField() {
+    public Field getField() {
         return (Field) member;
     }
 }
