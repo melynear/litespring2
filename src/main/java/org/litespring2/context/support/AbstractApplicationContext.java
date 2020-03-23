@@ -1,5 +1,6 @@
 package org.litespring2.context.support;
 
+import org.litespring2.beans.factory.annotation.AutowiredAnnotationProcessor;
 import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 import org.litespring2.beans.factory.xml.XmlBeanDefinitionReader;
 import org.litespring2.context.ApplicationContext;
@@ -23,6 +24,13 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         Resource resource = getResourceByPath(configFile);
         reader.loadBeanDefinition(resource);
         factory.setClassLoader(getClassLoader());
+        registerBeanPostProcessors(factory);
+    }
+    
+    protected void registerBeanPostProcessors(DefaultBeanFactory factory) {
+        AutowiredAnnotationProcessor processor = new AutowiredAnnotationProcessor();
+        processor.setBeanFactory(factory);
+        factory.addBeanPostProcessor(processor);
     }
     
     @Override

@@ -1,5 +1,8 @@
 package org.litespring2.beans.factory.annotation;
 
+import org.litespring2.beans.BeansException;
+import org.litespring2.beans.factory.BeanCreationException;
+import org.litespring2.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 import org.litespring2.core.annotation.AnnotationUtils;
 import org.litespring2.stereotype.Autowired;
@@ -19,7 +22,7 @@ import java.util.Set;
  * @version v1.0
  * @date 2020年03月22日
  */
-public class AutowiredAnnotationProcessor {
+public class AutowiredAnnotationProcessor implements InstantiationAwareBeanPostProcessor {
     private DefaultBeanFactory factory;
     
     private String requiredParameterName = "required";
@@ -91,5 +94,36 @@ public class AutowiredAnnotationProcessor {
         }
         
         return null;
+    }
+    
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+    
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
+    }
+    
+    @Override
+    public void postProcessPropertyValues(Object bean, String beanName) throws BeansException {
+        InjectionMetadata injectionMetadata = buildAutowiringMetadata(bean.getClass());
+        
+        try {
+            injectionMetadata.inject(bean);
+        } catch (Exception e) {
+            throw new BeanCreationException(beanName, "Injection of autowired dependencies failed", e);
+        }
+    }
+    
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+    
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
     }
 }

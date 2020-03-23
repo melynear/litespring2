@@ -7,14 +7,17 @@ import org.litespring2.beans.PropertyValue;
 import org.litespring2.beans.SimpleTypeConverter;
 import org.litespring2.beans.TypeConverter;
 import org.litespring2.beans.factory.BeanCreationException;
+import org.litespring2.beans.factory.config.BeanPostProcessor;
 import org.litespring2.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring2.beans.factory.config.DependencyDescriptor;
+import org.litespring2.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.litespring2.context.support.BeanDefinitionValueResolver;
 import org.litespring2.utils.ClassUtils;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +31,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     private ClassLoader classLoader;
     
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
+    
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
     
     @Override
     public Object getBean(String beanID) {
@@ -129,6 +134,12 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
      * @param bean
      */
     private void populateBeanUseCommonBeanUtils(BeanDefinition beanDefinition, Object bean) {
+        for (BeanPostProcessor postProcessor : beanPostProcessors) {
+            if (postProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                ((InstantiationAwareBeanPostProcessor) postProcessor).postProcessPropertyValues(bean, beanDefinition.getBeanID());
+            }
+        }
+        
         List<PropertyValue> propertyValues = beanDefinition.getPropertyValues();
         
         if (CollectionUtils.isEmpty(propertyValues)) {
@@ -159,6 +170,16 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
     @Override
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+    
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor postProcessor) {
+        this.beanPostProcessors.add(postProcessor);
+    }
+    
+    @Override
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
     }
     
     @Override
