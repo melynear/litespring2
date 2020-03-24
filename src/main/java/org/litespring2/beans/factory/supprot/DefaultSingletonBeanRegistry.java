@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>();
     
+    @Override
     public void registerSingleton(String beanName, Object object) {
         Assert.notNull(beanName, "beanName must not be null.");
         
@@ -27,6 +28,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         singletonObjects.put(beanName, object);
     }
     
+    @Override
     public Object getSingleton(String beanName) {
         return singletonObjects.get(beanName);
     }

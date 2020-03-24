@@ -25,14 +25,19 @@ public class FileSystemResource implements Resource {
     public FileSystemResource(String path) {
         Assert.notNull(path, "path must not be null.");
         this.path = path;
+    
+        // 在File中的相对路径都是相对于usr.dir的,
+        // usr.dir指定的是jvm的调用目录,因此会在项目根路径下查找文件
         this.file = new File(path);
     }
     
     
+    @Override
     public InputStream getInputStream() throws IOException {
         return new FileInputStream(file);
     }
     
+    @Override
     public String getDescription() {
         return "File [" + file.getAbsolutePath() + "]";
     }

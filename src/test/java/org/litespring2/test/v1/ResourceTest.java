@@ -17,6 +17,8 @@ import java.io.InputStream;
 public class ResourceTest {
     @Test
     public void testClassPathResource() throws IOException {
+        // ClassLoader查找资源时，是从classpath路径下查找的，不支持以/开头
+        // Class查找资源时，如果以/开头，则从classpath路径下查找，否则从当前类所在的包下查找
         Resource resource = new ClassPathResource("petstore-v1.xml");
         InputStream is = null;
         
@@ -32,7 +34,9 @@ public class ResourceTest {
     
     @Test
     public void testFileSystemResource() throws IOException {
-        Resource resource = new FileSystemResource("D:\\developdata\\IdeaProjects\\litespring2\\src\\test\\resources\\petstore-v1.xml");
+        // 在File中的相对路径都是相对于usr.dir的,
+        // usr.dir指定的是jvm的调用目录,因此会在项目根路径下查找文件
+        Resource resource = new FileSystemResource("src\\test\\resources\\petstore-v1.xml");
         
         InputStream is = null;
         
