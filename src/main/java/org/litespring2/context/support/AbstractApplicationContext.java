@@ -1,5 +1,6 @@
 package org.litespring2.context.support;
 
+import org.litespring2.beans.factory.NoSuchBeanDefinitionException;
 import org.litespring2.beans.factory.annotation.AutowiredAnnotationProcessor;
 import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 import org.litespring2.beans.factory.xml.XmlBeanDefinitionReader;
@@ -47,4 +48,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
     
     public abstract Resource getResourceByPath(String path);
+    
+    @Override
+    public Class<?> getType(String targetBeanName) throws NoSuchBeanDefinitionException {
+        return factory.getType(targetBeanName);
+    }
 }

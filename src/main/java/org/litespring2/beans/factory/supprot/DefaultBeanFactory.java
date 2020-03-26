@@ -7,6 +7,7 @@ import org.litespring2.beans.PropertyValue;
 import org.litespring2.beans.SimpleTypeConverter;
 import org.litespring2.beans.TypeConverter;
 import org.litespring2.beans.factory.BeanCreationException;
+import org.litespring2.beans.factory.NoSuchBeanDefinitionException;
 import org.litespring2.beans.factory.config.BeanPostProcessor;
 import org.litespring2.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring2.beans.factory.config.DependencyDescriptor;
@@ -218,5 +219,18 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         } catch (ClassNotFoundException e) {
             throw new BeanCreationException("cannot load class:" + beanDefinition.getBeanClassName(), e);
         }
+    }
+    
+    @Override
+    public Class<?> getType(String targetBeanName) throws NoSuchBeanDefinitionException {
+        BeanDefinition beanDefinition = getBeanDefinition(targetBeanName);
+        
+        if (beanDefinition == null) {
+            throw new NoSuchBeanDefinitionException(targetBeanName);
+        }
+        
+        resolveBeanClass(beanDefinition);
+        
+        return beanDefinition.getBeanClass();
     }
 }
