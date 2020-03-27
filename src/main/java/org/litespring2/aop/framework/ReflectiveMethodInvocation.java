@@ -1,4 +1,4 @@
-package org.litespring2.aop.aspectj;
+package org.litespring2.aop.framework;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

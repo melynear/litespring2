@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.litespring2.aop.aspectj.AspectJAfterReturningAdvice;
 import org.litespring2.aop.aspectj.AspectJAfterThrowingAdvice;
 import org.litespring2.aop.aspectj.AspectJBeforeAdvice;
-import org.litespring2.aop.aspectj.ReflectiveMethodInvocation;
+import org.litespring2.aop.framework.ReflectiveMethodInvocation;
 import org.litespring2.service.v5.PetStoreService;
 import org.litespring2.tx.TransactionManager;
 import org.litespring2.util.MessageTracker;
