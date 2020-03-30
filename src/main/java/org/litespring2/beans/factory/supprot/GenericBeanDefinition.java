@@ -29,8 +29,15 @@ public class GenericBeanDefinition implements BeanDefinition {
     
     private ConstructorArgument constructorArgument = new ConstructorArgument();
     
+    private boolean isSynthetic;
+    
     public GenericBeanDefinition() {
     
+    }
+    
+    public GenericBeanDefinition(Class<?> beanClass) {
+        this.beanClass = beanClass;
+        this.beanClassName = beanClass.getName();
     }
     
     public GenericBeanDefinition(String id, String beanClassName) {
@@ -118,5 +125,14 @@ public class GenericBeanDefinition implements BeanDefinition {
         
         this.beanClass = clazz;
         return clazz;
+    }
+    
+    public void setSynthetic(boolean isSynthetic) {
+        this.isSynthetic = isSynthetic;
+    }
+    
+    @Override
+    public boolean isSynthetic() {
+        return this.isSynthetic;
     }
 }

@@ -7,9 +7,10 @@ import org.junit.Test;
 import org.litespring2.aop.aspectj.AspectJAfterReturningAdvice;
 import org.litespring2.aop.aspectj.AspectJAfterThrowingAdvice;
 import org.litespring2.aop.aspectj.AspectJBeforeAdvice;
+import org.litespring2.aop.config.AspectInstanceFactory;
 import org.litespring2.aop.framework.ReflectiveMethodInvocation;
+import org.litespring2.beans.factory.BeanFactory;
 import org.litespring2.service.v5.PetStoreService;
-import org.litespring2.tx.TransactionManager;
 import org.litespring2.util.MessageTracker;
 
 import java.lang.reflect.Method;
@@ -21,27 +22,31 @@ import java.util.List;
  * @version v1.0
  * @date 2020年03月27日
  */
-public class ReflectiveMethodInvocationTest {
+public class ReflectiveMethodInvocationTest extends AbstarctV5Test {
     private AspectJBeforeAdvice beforeAdvice;
     private AspectJAfterReturningAdvice afterReturningAdvice;
     private AspectJAfterThrowingAdvice afterThrowingAdvice;
-    private TransactionManager manager;
+    
+    private BeanFactory factory;
+    private AspectInstanceFactory adviceObjectFactory;
     
     private PetStoreService service;
     
     @Before
-    public void setUp() throws NoSuchMethodException {
+    public void setUp() throws Exception {
         service = new PetStoreService();
-        manager = new TransactionManager();
         
         MessageTracker.clearMsgs();
+        factory = getBeanFactory("petstore-v5.xml");
+        adviceObjectFactory = getAspectInstanceFactory("tx");
+        adviceObjectFactory.setBeanFactory(factory);
         
-        beforeAdvice = new AspectJBeforeAdvice(TransactionManager.class.getMethod("start"),
-                null, manager);
-        afterReturningAdvice = new AspectJAfterReturningAdvice(TransactionManager.class.getMethod("commit"),
-                null, manager);
-        afterThrowingAdvice = new AspectJAfterThrowingAdvice(TransactionManager.class.getMethod("rollback"),
-                null, manager);
+        beforeAdvice = new AspectJBeforeAdvice(getAdviceMethod("start"),
+                null, adviceObjectFactory);
+        afterReturningAdvice = new AspectJAfterReturningAdvice(getAdviceMethod("commit"),
+                null, adviceObjectFactory);
+        afterThrowingAdvice = new AspectJAfterThrowingAdvice(getAdviceMethod("rollback"),
+                null, adviceObjectFactory);
     }
     
     @Test

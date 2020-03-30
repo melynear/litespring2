@@ -3,6 +3,8 @@ package org.litespring2.aop.config;
 import org.apache.commons.lang3.StringUtils;
 import org.litespring2.beans.BeanUtils;
 import org.litespring2.beans.factory.BeanFactory;
+import org.litespring2.beans.factory.BeanFactoryAware;
+import org.litespring2.beans.factory.FactoryBean;
 
 import java.lang.reflect.Method;
 
@@ -11,13 +13,14 @@ import java.lang.reflect.Method;
  * @version v1.0
  * @date 2020年03月26日
  */
-public class MethodLocatingFactory {
+public class MethodLocatingFactory implements FactoryBean<Method>, BeanFactoryAware {
     private String targetBeanName;
     
     private String methodName;
     
     private Method method;
     
+    @Override
     public void setBeanFactory(BeanFactory factory) {
         if (StringUtils.isEmpty(targetBeanName)) {
             throw new IllegalArgumentException("Property 'targetBeanName' is required");
@@ -53,7 +56,13 @@ public class MethodLocatingFactory {
         this.method = method;
     }
     
+    @Override
     public Method getObject() {
         return this.method;
+    }
+    
+    @Override
+    public Class<Method> getObjectType() {
+        return Method.class;
     }
 }

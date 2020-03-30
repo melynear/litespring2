@@ -14,6 +14,6 @@ import org.litespring2.test.v4.V4AllTests;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({V1AllTests.class, V2AllTests.class, V3AllTests.class, V4AllTests.class,
-        PathTest.class})
+        PathTest.class, PropertyDescriptorTest.class})
 public class AllTests {
 }

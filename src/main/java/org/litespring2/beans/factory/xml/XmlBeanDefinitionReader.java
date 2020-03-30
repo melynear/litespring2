@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.litespring2.aop.config.ConfigBeanDefinitionParser;
 import org.litespring2.beans.BeanDefinition;
 import org.litespring2.beans.ConstructorArgument.ValueHolder;
 import org.litespring2.beans.PropertyValue;
@@ -76,6 +77,8 @@ public class XmlBeanDefinitionReader {
     
     private static final String CONTEXT_NAMESPACE_URI = "http://www.springframework.org/schema/context";
     
+    private static final String AOP_NAMESPACE_URI = "http://www.springframework.org/schema/aop";
+    
     private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
     
     private BeanDefinitionRegistry regsitry;
@@ -113,6 +116,8 @@ public class XmlBeanDefinitionReader {
                     parseDefaultElement(element);
                 } else if (isContextNamespace(namespaceURI)) {
                     parseComponentElement(element);
+                } else if (isAOPNamespace(namespaceURI)) {
+                    parseAOPElement(element);
                 }
             }
         } catch (Exception e) {
@@ -151,12 +156,21 @@ public class XmlBeanDefinitionReader {
         scanner.doScan(basePackage);
     }
     
+    private void parseAOPElement(Element element) {
+        ConfigBeanDefinitionParser parser = new ConfigBeanDefinitionParser();
+        parser.parse(element, this.regsitry);
+    }
+    
     private boolean isDefaultNamespace(String namespaceURI) {
         return !StringUtils.isNotEmpty(namespaceURI) || BEANS_NAMESPACE_URI.equals(namespaceURI);
     }
     
     private boolean isContextNamespace(String namespaceURI) {
         return !StringUtils.isNotEmpty(namespaceURI) || CONTEXT_NAMESPACE_URI.equals(namespaceURI);
+    }
+    
+    private boolean isAOPNamespace(String namespaceURI) {
+        return !StringUtils.isNotEmpty(namespaceURI) || AOP_NAMESPACE_URI.equals(namespaceURI);
     }
     
     private void parseConstructorArgElements(Element beanElement, BeanDefinition beanDefinition) {
