@@ -30,4 +30,12 @@ public abstract class AbstractAspectJAdvice implements Advice {
     public Pointcut getPointcut() {
         return pointcut;
     }
+    
+    public Method getAdviceMethod() {
+        return adviceMethod;
+    }
+    
+    public Object getAdviceInstance() throws Exception {
+        return adviceObjectFactory.getAspectInstance();
+    }
 }

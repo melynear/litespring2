@@ -7,7 +7,7 @@ import org.litespring2.beans.factory.config.RuntimeBeanReference;
 import org.litespring2.beans.factory.config.TypedStringValue;
 import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
 import org.litespring2.beans.factory.xml.XmlBeanDefinitionReader;
-import org.litespring2.context.support.BeanDefinitionValueResolver;
+import org.litespring2.beans.factory.supprot.BeanDefinitionValueResolver;
 import org.litespring2.core.io.ClassPathResource;
 import org.litespring2.dao.v2.AccountDao;
 

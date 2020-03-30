@@ -7,12 +7,11 @@ import org.litespring2.beans.PropertyValue;
 import org.litespring2.beans.SimpleTypeConverter;
 import org.litespring2.beans.TypeConverter;
 import org.litespring2.beans.factory.BeanCreationException;
+import org.litespring2.beans.factory.BeanFactoryAware;
 import org.litespring2.beans.factory.NoSuchBeanDefinitionException;
 import org.litespring2.beans.factory.config.BeanPostProcessor;
-import org.litespring2.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring2.beans.factory.config.DependencyDescriptor;
 import org.litespring2.beans.factory.config.InstantiationAwareBeanPostProcessor;
-import org.litespring2.context.support.BeanDefinitionValueResolver;
 import org.litespring2.utils.ClassUtils;
 
 import java.beans.BeanInfo;
@@ -21,6 +20,7 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version v1.0
  * @date 2020年03月09日
  */
-public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory extends AbstractBeanFactory implements BeanDefinitionRegistry {
     private ClassLoader classLoader;
     
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
@@ -56,12 +56,15 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         return createBean(beanDefinition);
     }
     
-    private Object createBean(BeanDefinition beanDefinition) {
+    @Override
+    protected Object createBean(BeanDefinition beanDefinition) {
         Object bean = instantiateBean(beanDefinition);
         
         // populateBean(beanDefinition, bean);
         
         populateBeanUseCommonBeanUtils(beanDefinition, bean);
+        
+        initializeBean(beanDefinition, bean);
         
         return bean;
     }
@@ -163,6 +166,18 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         }
     }
     
+    private Object initializeBean(BeanDefinition beanDefinition, Object bean) {
+        invokeAwareMethod(bean);
+        
+        return bean;
+    }
+    
+    private void invokeAwareMethod(Object bean) {
+        if (bean instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) bean).setBeanFactory(this);
+        }
+    }
+    
     @Override
     public ClassLoader getClassLoader() {
         return classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader();
@@ -232,5 +247,19 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
         resolveBeanClass(beanDefinition);
         
         return beanDefinition.getBeanClass();
+    }
+    
+    @Override
+    public List<Object> getBeansByType(Class<?> type) {
+        List<Object> result = new ArrayList<>();
+        
+        Set<String> beanNames = beanDefinitionMap.keySet();
+        for (String beanName : beanNames) {
+            if (type.isAssignableFrom(getType(beanName))) {
+                result.add(getBean(beanName));
+            }
+        }
+        
+        return result;
     }
 }

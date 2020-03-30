@@ -1,5 +1,7 @@
 package org.litespring2.beans.factory;
 
+import java.util.List;
+
 /**
  * @author 种花家的兔子
  * @version v1.0
@@ -9,4 +11,6 @@ public interface BeanFactory {
     Object getBean(String beanID);
     
     Class<?> getType(String targetBeanName) throws NoSuchBeanDefinitionException;
+    
+    List<Object> getBeansByType(Class<?> type);
 }

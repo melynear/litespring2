@@ -8,6 +8,8 @@ import org.litespring2.context.ApplicationContext;
 import org.litespring2.core.io.Resource;
 import org.litespring2.utils.ClassUtils;
 
+import java.util.List;
+
 /**
  * @author 种花家的兔子
  * @version v1.0
@@ -52,5 +54,10 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     @Override
     public Class<?> getType(String targetBeanName) throws NoSuchBeanDefinitionException {
         return factory.getType(targetBeanName);
+    }
+    
+    @Override
+    public List<Object> getBeansByType(Class<?> type) {
+        return factory.getBeansByType(type);
     }
 }
