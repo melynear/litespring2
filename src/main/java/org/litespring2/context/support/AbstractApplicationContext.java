@@ -1,5 +1,6 @@
 package org.litespring2.context.support;
 
+import org.litespring2.aop.aspectj.AspectJAutoProxyCreator;
 import org.litespring2.beans.factory.NoSuchBeanDefinitionException;
 import org.litespring2.beans.factory.annotation.AutowiredAnnotationProcessor;
 import org.litespring2.beans.factory.supprot.DefaultBeanFactory;
@@ -31,9 +32,17 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
     
     protected void registerBeanPostProcessors(DefaultBeanFactory factory) {
-        AutowiredAnnotationProcessor processor = new AutowiredAnnotationProcessor();
-        processor.setBeanFactory(factory);
-        factory.addBeanPostProcessor(processor);
+        {
+            AutowiredAnnotationProcessor processor = new AutowiredAnnotationProcessor();
+            processor.setBeanFactory(factory);
+            factory.addBeanPostProcessor(processor);
+        }
+        
+        {
+            AspectJAutoProxyCreator processor = new AspectJAutoProxyCreator();
+            processor.setBeanFactory(factory);
+            factory.addBeanPostProcessor(processor);
+        }
     }
     
     @Override

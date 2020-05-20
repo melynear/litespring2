@@ -1,5 +1,9 @@
 package org.litespring2.utils;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * 工具类
  *
@@ -69,5 +73,64 @@ public abstract class ClassUtils {
         String shortName = className.substring(lastDotIndex + 1, nameEndIndex);
         shortName = shortName.replace(INNER_CLASS_SEPARATOR, PACKAGE_SEPARATOR);
         return shortName;
+    }
+    
+    /**
+     * Return all interfaces that the given class implements as Set,
+     * including ones implemented by superclasses.
+     * <p>If the class itself is an interface, it gets returned as sole interface.
+     *
+     * @param clazz the class to analyze for interfaces
+     * @return all interfaces that the given object implements as Set
+     */
+    public static Set<Class> getAllInterfacesForClassAsSet(Class clazz) {
+        return getAllInterfacesForClassAsSet(clazz, null);
+    }
+    
+    /**
+     * Return all interfaces that the given class implements as Set,
+     * including ones implemented by superclasses.
+     * <p>If the class itself is an interface, it gets returned as sole interface.
+     *
+     * @param clazz       the class to analyze for interfaces
+     * @param classLoader the ClassLoader that the interfaces need to be visible in
+     *                    (may be {@code null} when accepting all declared interfaces)
+     * @return all interfaces that the given object implements as Set
+     */
+    public static Set<Class> getAllInterfacesForClassAsSet(Class clazz, ClassLoader classLoader) {
+        Assert.notNull(clazz, "Class must not be null");
+        if (clazz.isInterface() && isVisible(clazz, classLoader)) {
+            return Collections.singleton(clazz);
+        }
+        Set<Class> interfaces = new LinkedHashSet<Class>();
+        while (clazz != null) {
+            Class<?>[] ifcs = clazz.getInterfaces();
+            for (Class<?> ifc : ifcs) {
+                interfaces.addAll(getAllInterfacesForClassAsSet(ifc, classLoader));
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return interfaces;
+    }
+    
+    /**
+     * Check whether the given class is visible in the given ClassLoader.
+     *
+     * @param clazz       the class to check (typically an interface)
+     * @param classLoader the ClassLoader to check against (may be {@code null},
+     *                    in which case this method will always return {@code true})
+     */
+    public static boolean isVisible(Class<?> clazz, ClassLoader classLoader) {
+        if (classLoader == null) {
+            return true;
+        }
+        try {
+            Class<?> actualClass = classLoader.loadClass(clazz.getName());
+            return (clazz == actualClass);
+            // Else: different interface class found...
+        } catch (ClassNotFoundException ex) {
+            // No interface class found...
+            return false;
+        }
     }
 }

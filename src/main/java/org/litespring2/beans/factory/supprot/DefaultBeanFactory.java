@@ -2,10 +2,7 @@ package org.litespring2.beans.factory.supprot;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.litespring2.beans.BeanDefinition;
-import org.litespring2.beans.PropertyValue;
-import org.litespring2.beans.SimpleTypeConverter;
-import org.litespring2.beans.TypeConverter;
+import org.litespring2.beans.*;
 import org.litespring2.beans.factory.BeanCreationException;
 import org.litespring2.beans.factory.BeanFactoryAware;
 import org.litespring2.beans.factory.NoSuchBeanDefinitionException;
@@ -64,9 +61,7 @@ public class DefaultBeanFactory extends AbstractBeanFactory implements BeanDefin
         
         populateBeanUseCommonBeanUtils(beanDefinition, bean);
         
-        initializeBean(beanDefinition, bean);
-        
-        return bean;
+        return initializeBean(beanDefinition, bean);
     }
     
     /**
@@ -169,7 +164,22 @@ public class DefaultBeanFactory extends AbstractBeanFactory implements BeanDefin
     private Object initializeBean(BeanDefinition beanDefinition, Object bean) {
         invokeAwareMethod(bean);
         
+        if (!beanDefinition.isSynthetic()) {
+            return applyBeanPostProcessorsAfterInitialization(bean, beanDefinition.getBeanID());
+        }
+        
         return bean;
+    }
+    
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+            throws BeansException {
+        Object result = existingBean;
+        
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result = beanProcessor.postProcessAfterInitialization(result, beanName);
+        }
+        
+        return result;
     }
     
     private void invokeAwareMethod(Object bean) {
